@@ -8,8 +8,8 @@ interface MovieGridProps {
 
 export const MovieGrid = ({ movies, onMovieClick }: MovieGridProps) => {
   return (
-  <div className="flex flex-wrap justify-center gap-6 px-4">
-  {movies.map((movie) => (
+<div className="grid grid-cols- sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4">
+{movies.map((movie) => (
     <div
       key={movie.imdbID}
       className="

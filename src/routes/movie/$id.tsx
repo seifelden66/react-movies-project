@@ -26,6 +26,11 @@ function MovieDetailsPage() {
       try {
         const data = await omdbApi.getMovieDetails(id);
         setMovie(data);
+        if (data?.Title) {
+          document.title = `${data.Title} (${data.Year}) – Seif's Movies`;
+        } else {
+          document.title = "Movie Details – Seif's Movies";
+        }
       } catch (err) {
         if (err instanceof OMDbApiError) {
           setError(err.message);

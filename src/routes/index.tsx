@@ -15,6 +15,10 @@ export const Route = createFileRoute('/')({
 });
 
 function SearchPage() {
+  useEffect(() => {
+    document.title = "Search Movies – Seif's Movies";
+  }, []);
+
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [movies, setMovies] = useState<Movie[]>([]);
