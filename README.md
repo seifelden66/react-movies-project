@@ -9,6 +9,16 @@ npm install
 npm run start
 ```
 
+## Environment Variables
+
+Create a `.env` file in the project root with your OMDb API key:
+
+```
+VITE_OMDB_API_KEY=your_key_here
+```
+
+Vite only exposes variables prefixed with `VITE_`. The app reads this in `src/services/omdbApi.ts`.
+
 # Building For Production
 
 To build this application for production:
