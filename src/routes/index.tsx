@@ -5,7 +5,6 @@ import { useQuery, useQueries } from '@tanstack/react-query';
 import { SearchTemplate } from '@/components/templates/SearchTemplate';
 import { MovieGrid } from '@/components/organisms/MovieGrid';
 import { ErrorAlert } from '@/components/molecules/ErrorAlert';
-import { Spinner } from '@/components/atoms/Spinner';
 import { Text } from '@/components/atoms/Text';
 import { Button } from '@/components/atoms/Button';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -35,7 +34,7 @@ function SearchPage() {
       queryKey: ['movies', 'search', search],
       queryFn: () => omdbApi.searchMovies(search),
       staleTime: 1000 * 60 * 5,
-      cacheTime: 1000 * 60 * 30,
+      gcTime: 1000 * 60 * 30,
       enabled: !searchTerm.trim(),
     })),
   });
@@ -47,7 +46,6 @@ function SearchPage() {
     staleTime: 1000 * 60 * 5,
   });
 
-  // Deduplicate movies from multiple search results
   const popularMovies = useMemo(() => {
     if (searchTerm.trim()) return [];
 
@@ -104,12 +102,6 @@ function SearchPage() {
       onSearchChange={setSearchTerm}
       error={searchError ? <ErrorAlert message={searchError} /> : null}
     >
-      {isLoading && (
-        <div className="flex justify-center items-center py-12">
-          <Spinner size="lg" />
-        </div>
-      )}
-
       {showEmptyState && (
         <div className="text-center py-12">
           <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,9 +113,9 @@ function SearchPage() {
         </div>
       )}
 
-      {!isLoading && displayedMovies.length > 0 && (
+      {(isLoading || displayedMovies.length > 0) && (
         <>
-          {!searchTerm && (
+          {!searchTerm && !isLoading && (
             <div className="mb-6 px-4">
               <Text variant="h2" className="text-center">Popular Movies</Text>
               <Text variant="caption" className="text-center block mt-2">
@@ -131,9 +123,13 @@ function SearchPage() {
               </Text>
             </div>
           )}
-          <MovieGrid movies={displayedMovies} onMovieClick={handleMovieClick} />
+          <MovieGrid 
+            movies={displayedMovies} 
+            onMovieClick={handleMovieClick}
+            isLoading={isLoading}
+          />
           
-          {hasMoreMovies && (
+          {hasMoreMovies && !isLoading && (
             <div className="flex justify-center mt-8 mb-4">
               <Button onClick={handleLoadMore} variant="primary">
                 Load More Movies

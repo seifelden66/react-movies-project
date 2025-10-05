@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { DetailsTemplate } from '@/components/templates/DetailsTemplate';
 import { MovieDetailsCard } from '@/components/organisms/MovieDetailsCard';
-import { LoadingOverlay } from '@/components/molecules/LoadingOverlay';
+import { MovieDetailsSkeleton } from '@/components/molecules/MovieDetailsSkeleton';
 import { ErrorAlert } from '@/components/molecules/ErrorAlert';
 import { omdbApi, OMDbApiError } from '@/services/omdbApi';
 
@@ -39,14 +39,11 @@ function MovieDetailsPage() {
     ? 'An unexpected error occurred' 
     : null;
 
-  if (isLoading) {
-    return <LoadingOverlay message="Loading movie details..." />;
-  }
-
   return (
     <DetailsTemplate onBack={handleBack}>
       {errorMessage && <ErrorAlert message={errorMessage} />}
-      {movie && <MovieDetailsCard movie={movie} />}
+      {isLoading && <MovieDetailsSkeleton />}
+      {movie && !isLoading && <MovieDetailsCard movie={movie} />}
     </DetailsTemplate>
   );
 }
