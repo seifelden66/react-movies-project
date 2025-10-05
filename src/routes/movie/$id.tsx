@@ -1,11 +1,11 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { DetailsTemplate } from '@/components/templates/DetailsTemplate';
 import { MovieDetailsCard } from '@/components/organisms/MovieDetailsCard';
 import { LoadingOverlay } from '@/components/molecules/LoadingOverlay';
 import { ErrorAlert } from '@/components/molecules/ErrorAlert';
 import { omdbApi, OMDbApiError } from '@/services/omdbApi';
-import type { MovieDetails } from '@/types/movie';
 
 export const Route = createFileRoute('/movie/$id')({
   component: MovieDetailsPage,
@@ -14,48 +14,38 @@ export const Route = createFileRoute('/movie/$id')({
 function MovieDetailsPage() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
-  const [movie, setMovie] = useState<MovieDetails | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
+  const { data: movie, isLoading, error } = useQuery({
+    queryKey: ['movie', 'details', id],
+    queryFn: () => omdbApi.getMovieDetails(id),
+    staleTime: 1000 * 60 * 10, 
+  });
 
   useEffect(() => {
-    const fetchMovieDetails = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const data = await omdbApi.getMovieDetails(id);
-        setMovie(data);
-        if (data?.Title) {
-          document.title = `${data.Title} (${data.Year}) – Seif's Movies`;
-        } else {
-          document.title = "Movie Details – Seif's Movies";
-        }
-      } catch (err) {
-        if (err instanceof OMDbApiError) {
-          setError(err.message);
-        } else {
-          setError('An unexpected error occurred');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMovieDetails();
-  }, [id]);
+    if (movie?.Title) {
+      document.title = `${movie.Title} (${movie.Year}) – Seif's Movies`;
+    } else {
+      document.title = "Movie Details – Seif's Movies";
+    }
+  }, [movie]);
 
   const handleBack = () => {
     navigate({ to: '/' });
   };
 
-  if (loading) {
+  const errorMessage = error instanceof OMDbApiError 
+    ? error.message 
+    : error 
+    ? 'An unexpected error occurred' 
+    : null;
+
+  if (isLoading) {
     return <LoadingOverlay message="Loading movie details..." />;
   }
 
   return (
     <DetailsTemplate onBack={handleBack}>
-      {error && <ErrorAlert message={error} />}
+      {errorMessage && <ErrorAlert message={errorMessage} />}
       {movie && <MovieDetailsCard movie={movie} />}
     </DetailsTemplate>
   );
