@@ -8,9 +8,12 @@ import {
   // Store,
   X,
 } from 'lucide-react'
+import { Heart } from 'lucide-react'
+import { useFavouritesCount } from '@/stores/favourites'
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const favouritesCount = useFavouritesCount()
  
 
   return (
@@ -28,6 +31,15 @@ export default function Header() {
            Home
           </Link>
         </h1>
+        <div className="ml-auto flex items-center gap-4">
+          <Link to={"/favourites" as any} className="relative flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+            <Heart size={18} className={favouritesCount > 0 ? 'text-red-400' : 'text-white'} />
+            <span>Favourites</span>
+            <span className="ml-1 inline-flex items-center justify-center min-w-6 h-6 text-sm rounded-full bg-red-600 px-2">
+              {favouritesCount}
+            </span>
+          </Link>
+        </div>
       </header>
 
       <aside
