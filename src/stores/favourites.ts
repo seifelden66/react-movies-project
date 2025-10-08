@@ -6,11 +6,36 @@ export interface FavouritesState {
   itemsById: Record<string, Movie>
 }
 
-const initialState: FavouritesState = {
-  itemsById: {},
+const STORAGE_KEY = 'movie-favourites'
+
+const loadInitialState = (): FavouritesState => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored) {
+      const parsed = JSON.parse(stored)
+      return { itemsById: parsed.itemsById || {} }
+    }
+  } catch (error) {
+    console.error('Failed to load favourites from localStorage:', error)
+  }
+  return { itemsById: {} }
 }
 
+const saveToStorage = (state: FavouritesState) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+  } catch (error) {
+    console.error('Failed to save favourites to localStorage:', error)
+  }
+}
+
+const initialState: FavouritesState = loadInitialState()
+
 export const favouritesStore = new Store<FavouritesState>(initialState)
+
+favouritesStore.subscribe(() => {
+  saveToStorage(favouritesStore.state)
+})
 
 export const favouritesSelectors = {
   selectAll: (state: FavouritesState) => Object.values(state.itemsById),
@@ -59,5 +84,3 @@ export function useFavouritesCount() {
 export function useIsFavourite(imdbID: string) {
   return useStore(favouritesStore, favouritesSelectors.selectHas(imdbID))
 }
-
-

@@ -3,9 +3,11 @@ import { Text } from '../atoms/Text';
 import { MoviePoster } from '../molecules/MoviePoster';
 import { Card, CardContent } from '@/components/atoms/Card';
 import type { Movie } from '@/types/movie';
-import { memo } from 'react';
+import { memo, useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
 import { favouritesActions, useIsFavourite } from '@/stores/favourites';
+import { useToast } from '@/hooks/useToast';
+import { useToastListener } from '@/hooks/useToast';
 
 interface MovieCardProps {
   movie: Movie;
@@ -14,9 +16,48 @@ interface MovieCardProps {
 
 export const MovieCard = memo(({ movie, onClick }: MovieCardProps) => {
   const isFavourite = useIsFavourite(movie.imdbID);
+  const { toast } = useToast();
+  const { toastListeners, toastRemoveListeners } = useToastListener();
+  const [hasActiveToast, setHasActiveToast] = useState(false);
+
+  useEffect(() => {
+    const handleAdd = () => {
+      setHasActiveToast(true)
+    }
+
+    const handleRemove = () => {
+      setHasActiveToast(false)
+    }
+
+    toastListeners.add(handleAdd)
+    toastRemoveListeners.add(handleRemove)
+
+    return () => {
+      toastListeners.delete(handleAdd)
+      toastRemoveListeners.delete(handleRemove)
+    }
+  }, [toastListeners, toastRemoveListeners])
+
   const handleToggleFavourite = (e: React.MouseEvent) => {
     e.stopPropagation();
-    favouritesActions.toggle(movie);
+    
+    if (hasActiveToast) return;
+    
+    if (isFavourite) {
+      favouritesActions.toggle(movie);
+      toast({
+        title: 'Removed from Favourites',
+        description: `${movie.Title} has been removed`,
+        variant: 'destructive',
+      });
+    } else {
+      favouritesActions.toggle(movie);
+      toast({
+        title: 'Added to Favourites',
+        description: `${movie.Title} has been saved`,
+        variant: 'default',
+      });
+    }
   };
 
   return (
@@ -30,8 +71,13 @@ export const MovieCard = memo(({ movie, onClick }: MovieCardProps) => {
         </div>
         <button
           onClick={handleToggleFavourite}
+          disabled={hasActiveToast}
           aria-label={isFavourite ? 'Remove from favourites' : 'Add to favourites'}
-          className="absolute top-2 right-2 p-2 rounded-full bg-black/60 hover:bg-black/80 transition-colors"
+          className={`absolute top-2 right-2 p-2 rounded-full transition-all ${
+            hasActiveToast 
+              ? 'bg-gray-400/60 cursor-not-allowed opacity-50' 
+              : 'bg-black/60 hover:bg-black/80'
+          }`}
         >
           <Heart
             size={20}
