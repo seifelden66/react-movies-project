@@ -7,11 +7,11 @@ interface LoadingOverlayProps {
 
 export const LoadingOverlay = ({ message = 'Loading...' }: LoadingOverlayProps) => {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <section className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" aria-live="polite" aria-busy="true">
       <div className="bg-white p-6 rounded-lg text-center">
         <Spinner size="lg" />
         <Text className="mt-4">{message}</Text>
       </div>
-    </div>
+    </section>
   );
 };

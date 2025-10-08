@@ -1,7 +1,6 @@
 import { Badge } from '../atoms/Badge';
 import { Text } from '../atoms/Text';
 import { MoviePoster } from '../molecules/MoviePoster';
-import { Card, CardContent } from '@/components/atoms/Card';
 import type { MovieDetails } from '@/types/movie';
 
 interface MovieDetailsCardProps {
@@ -10,14 +9,13 @@ interface MovieDetailsCardProps {
 
 export const MovieDetailsCard = ({ movie }: MovieDetailsCardProps) => {
   return (
-    <Card className="overflow-hidden">
+    <section className="overflow-hidden" aria-label="Movie details">
       <div className="md:flex">
-        <div className="md:w-1/3">
+        <aside className="md:w-1/3">
           <MoviePoster src={movie.Poster} alt={movie.Title} size="large" />
-        </div>
-        <CardContent className="md:w-2/3 p-8">
+        </aside>
+        <article className="md:w-2/3 p-8">
           <Text variant="h2" className="mb-2">{movie.Title}</Text>
-          
           <div className="flex flex-wrap gap-2 mb-4">
             <Badge variant="blue">{movie.Year}</Badge>
             {movie.Rated && movie.Rated !== 'N/A' && (
@@ -27,54 +25,49 @@ export const MovieDetailsCard = ({ movie }: MovieDetailsCardProps) => {
               <Badge variant="purple">{movie.Runtime}</Badge>
             )}
           </div>
-
           {movie.Genre && movie.Genre !== 'N/A' && (
-            <div className="mb-4">
+            <section className="mb-4" aria-label="Genre">
               <Text variant="h3" className="text-sm font-semibold text-gray-600 mb-1">
                 Genre
               </Text>
               <Text>{movie.Genre}</Text>
-            </div>
+            </section>
           )}
-
           {movie.Director && movie.Director !== 'N/A' && (
-            <div className="mb-4">
+            <section className="mb-4" aria-label="Director">
               <Text variant="h3" className="text-sm font-semibold text-gray-600 mb-1">
                 Director
               </Text>
               <Text>{movie.Director}</Text>
-            </div>
+            </section>
           )}
-
           {movie.Actors && movie.Actors !== 'N/A' && (
-            <div className="mb-4">
+            <section className="mb-4" aria-label="Cast">
               <Text variant="h3" className="text-sm font-semibold text-gray-600 mb-1">
                 Cast
               </Text>
               <Text>{movie.Actors}</Text>
-            </div>
+            </section>
           )}
-
           {movie.Plot && movie.Plot !== 'N/A' && (
-            <div className="mb-4">
+            <section className="mb-4" aria-label="Plot">
               <Text variant="h3" className="text-sm font-semibold text-gray-600 mb-1">
                 Plot
               </Text>
               <Text className="leading-relaxed">{movie.Plot}</Text>
-            </div>
+            </section>
           )}
-
           {movie.imdbRating && movie.imdbRating !== 'N/A' && (
             <div className="flex items-center gap-2 mt-6">
-              <span className="text-2xl font-bold text-yellow-500">★</span>
+              <span className="text-2xl font-bold text-yellow-500" aria-label="IMDB star">★</span>
               <span className="text-xl font-semibold text-gray-900">
                 {movie.imdbRating}
               </span>
               <Text variant="caption">/ 10</Text>
             </div>
           )}
-        </CardContent>
+        </article>
       </div>
-    </Card>
+    </section>
   );
 };

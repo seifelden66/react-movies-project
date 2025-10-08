@@ -13,8 +13,9 @@ export const Badge = ({ variant = 'blue', children }: BadgeProps) => {
     yellow: 'bg-yellow-100 text-yellow-800'
   };
 
+  // Using <mark> for Badge if it highlights important info, otherwise <span> with role="status"
   return (
-    <span className={`px-3 py-1 rounded-full text-sm ${variants[variant]}`}>
+    <span role="status" className={`px-3 py-1 rounded-full text-sm ${variants[variant]}`}>
       {children}
     </span>
   );

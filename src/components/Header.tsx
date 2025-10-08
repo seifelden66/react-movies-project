@@ -31,7 +31,7 @@ export default function Header() {
            Home
           </Link>
         </h1>
-        <div className="ml-auto flex items-center gap-4">
+        <nav className="ml-auto flex items-center gap-4" aria-label="Main navigation">
           <Link to={"/favourites" as any} className="relative flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors">
             <Heart size={18} className={favouritesCount > 0 ? 'text-red-400' : 'text-white'} />
             <span>Favourites</span>
@@ -39,14 +39,14 @@ export default function Header() {
               {favouritesCount}
             </span>
           </Link>
-        </div>
+        </nav>
       </header>
-
       <aside
         className={`fixed top-0 left-0 h-full w-80 bg-gray-900 text-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
+        aria-label="Sidebar navigation"
       >
-        <div className="flex items-center justify-between p-4 border-b border-gray-700">
+        <header className="flex items-center justify-between p-4 border-b border-gray-700">
           <h2 className="text-xl font-bold">Navigation</h2>
           <button
             onClick={() => setIsOpen(false)}
@@ -55,49 +55,25 @@ export default function Header() {
           >
             <X size={24} />
           </button>
-        </div>
-
+        </header>
         <nav className="flex-1 p-4 overflow-y-auto">
-          <Link
-            to="/"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
-            activeProps={{
-              className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <Home size={20} />
-            <span className="font-medium">Home</span>
-          </Link>
-
-
-          {/* <Link
-            to="/demo/tanstack-query"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
-            activeProps={{
-              className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <Network size={20} />
-            <span className="font-medium">TanStack Query</span>
-          </Link>
-
-          <Link
-            to="/demo/store"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
-            activeProps={{
-              className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <Store size={20} />
-            <span className="font-medium">Store</span>
-          </Link> */}
-
+          <ul>
+            <li>
+              <Link
+                to="/"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+                activeProps={{
+                  className:
+                    'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+                }}
+              >
+                <Home size={20} />
+                <span className="font-medium">Home</span>
+              </Link>
+            </li>
+            {/* Add more navigation links as <li> if needed */}
+          </ul>
         </nav>
       </aside>
     </>
