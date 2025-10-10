@@ -1,35 +1,8 @@
-import { useState, useEffect } from 'react'
-import { useToastListener } from '@/hooks/useToast'
 import { Check, X, AlertCircle } from 'lucide-react'
-
-interface Toast {
-  id: string
-  title?: string
-  description?: string
-  variant?: 'default' | 'destructive'
-}
+import { useToastList, toastActions } from '@/stores/toast'
 
 export function Toaster() {
-  const [toasts, setToasts] = useState<Toast[]>([])
-  const { toastListeners, toastRemoveListeners } = useToastListener()
-
-  useEffect(() => {
-    const handleAdd = (toast: Toast) => {
-      setToasts(prev => [...prev, toast])
-    }
-
-    const handleRemove = (id: string) => {
-      setToasts(prev => prev.filter(t => t.id !== id))
-    }
-
-    toastListeners.add(handleAdd)
-    toastRemoveListeners.add(handleRemove)
-
-    return () => {
-      toastListeners.delete(handleAdd)
-      toastRemoveListeners.delete(handleRemove)
-    }
-  }, [toastListeners, toastRemoveListeners])
+  const toasts = useToastList()
 
   return (
     <div className="fixed top-0 right-0 z-[100] flex max-h-screen w-full flex-col p-4 sm:top-0 sm:right-0 sm:flex-col md:max-w-[420px]">
@@ -72,9 +45,7 @@ export function Toaster() {
             )}
           </div>
           <button
-            onClick={() => {
-              toastRemoveListeners.forEach(listener => listener(toast.id))
-            }}
+            onClick={() => toastActions.remove(toast.id)}
             className="flex-shrink-0 text-gray-400 hover:text-gray-600"
           >
             <X className="h-4 w-4" />
