@@ -4,6 +4,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import Header from '../components/Header'
 import { Toaster } from '../components/ui/toaster'
+import { NotFound } from '../components/templates/NotFound'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
@@ -33,4 +34,5 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       />
     </>
   ),
+  notFoundComponent: () => <NotFound />,
 })
